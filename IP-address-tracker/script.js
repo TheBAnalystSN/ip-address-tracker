@@ -81,4 +81,60 @@ async function resolveDomain(domain) {
 }
 
 /* Fetch geo info from geolocation-db */
-as
+async function fetchGeo(ip = "") {
+  const url = ip
+    ? `https://geolocation-db.com/json/${ip}&position=true`
+    : `https://geolocation-db.com/json/&position=true`;
+
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Geo lookup failed");
+
+  return await res.json();
+}
+
+/* INITIAL LOAD */
+async function initApp() {
+  initMap();
+
+  try {
+    const data = await fetchGeo();
+    updateInfoPanel(data);
+    showMarker(data.latitude, data.longitude, data.city);
+
+  } catch (err) {
+    console.error("Init error:", err);
+  }
+}
+
+/* SEARCH HANDLER */
+async function handleSearch() {
+  let query = inputEl.value.trim();
+  if (!query) return alert("Enter an IP or domain.");
+
+  let ip = query;
+
+  // Domain? Convert to IP
+  if (isNaN(query.replace(/\./g, ""))) {
+    ip = await resolveDomain(query);
+    if (!ip) return alert("Invalid domain. Could not resolve.");
+  }
+
+  try {
+    const data = await fetchGeo(ip);
+    updateInfoPanel(data);
+    showMarker(data.latitude, data.longitude, data.city);
+
+  } catch (err) {
+    console.error("Search error:", err);
+    alert("Unable to locate that IP or domain.");
+  }
+}
+
+/* EVENTS */
+btnEl.addEventListener("click", handleSearch);
+inputEl.addEventListener("keypress", e => {
+  if (e.key === "Enter") handleSearch();
+});
+
+/* START APP */
+initApp();
