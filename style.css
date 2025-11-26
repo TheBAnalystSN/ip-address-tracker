@@ -30,8 +30,8 @@ body { font-family: "Rubik", system-ui, -apple-system, "Segoe UI", Roboto, "Helv
 /* Search bar */
 .search-wrap { width: min(720px, 90%); margin: 0 auto; display: flex; }
 #search-input { flex: 1; padding: 16px; border-radius: 12px 0 0 12px; border: none; font-size: 16px; }
-#search-btn { background: #000; border: none; padding: 0 18px; border-radius: 0 12px 12px 0; cursor: pointer; display:flex; align-items:center; }
-#search-btn img { width: 16px; filter: invert(1); }
+#search-btn { background: #000000; border: none; padding: 0 18px; border-radius: 0 12px 12px 0; cursor: pointer; display:flex; align-items:center; }
+#search-btn img { width: 16px; }
 
 /* Info panel overlapping header & map */
 .info-panel {
@@ -45,7 +45,7 @@ body { font-family: "Rubik", system-ui, -apple-system, "Segoe UI", Roboto, "Helv
   display:flex;
   gap: 18px;
   justify-content: space-between;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  box-shadow: 0 10px 30px rgba(5, 5, 5, 0.12);
   z-index: 5;
   text-align: left;
 }

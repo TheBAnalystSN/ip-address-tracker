@@ -1,140 +1,108 @@
-/* ============================================
-   IP Address Tracker (Geolocation-DB version)
-   No API key required
-   ============================================ */
+/* ===============================
+   IP ADDRESS TRACKER
+   Uses ipapi.co (no API key needed)
+================================ */
 
-/* ========== DOM ELEMENTS ========== */
 const inputEl = document.getElementById("search-input");
 const btnEl = document.getElementById("search-btn");
+
 const ipEl = document.getElementById("ip");
 const locationEl = document.getElementById("location");
 const timezoneEl = document.getElementById("timezone");
 const ispEl = document.getElementById("isp");
 
-/* ========== MAP STATE ========== */
 let map;
-let markerLayer;
+let marker;
 
-/* Custom map marker */
-function createIcon() {
-  return L.icon({
-    iconUrl: "images/icon-location.svg",
-    iconSize: [46, 56],
-    iconAnchor: [23, 56]
-  });
-}
-
-/* Setup map */
+/* Initialize Map */
 function initMap() {
-  if (map) return;
-  map = L.map("map", { zoomControl: true }).setView([20, 0], 2);
+  map = L.map("map").setView([20, 0], 3);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: '&copy; OpenStreetMap contributors'
+    attribution: "&copy; OpenStreetMap contributors"
   }).addTo(map);
 
-  markerLayer = L.layerGroup().addTo(map);
+  marker = L.marker([0, 0], {
+    icon: L.icon({
+      iconUrl: "images/icon-location.svg",
+      iconSize: [46, 56],
+      iconAnchor: [23, 56]
+    })
+  }).addTo(map);
 }
 
-/* Show marker on map */
-function showMarker(lat, lng, popupText) {
-  markerLayer.clearLayers();
-  const icon = createIcon();
-  const marker = L.marker([lat, lng], { icon }).addTo(markerLayer);
+/* Update UI panel */
+function updatePanel(data) {
+  ipEl.textContent = data.ip || "—";
+  locationEl.textContent = `${data.city}, ${data.region}, ${data.country_name}`;
+  timezoneEl.textContent = data.timezone;
+  ispEl.textContent = data.org || "Unknown ISP";
+}
 
-  if (popupText) {
-    marker.bindPopup(popupText, { closeButton: false }).openPopup();
-  }
-
+/* Move marker */
+function updateMap(lat, lng) {
   map.setView([lat, lng], 13);
+  marker.setLatLng([lat, lng]);
 }
 
-/* Update UI info panel */
-function updateInfoPanel(data, isp = "—") {
-  ipEl.textContent = data.IPv4 || data.ip || "—";
-
-  const city = data.city || "";
-  const state = data.state || "";
-  const country = data.country_name || "";
-
-  locationEl.textContent = `${city}, ${state} ${country}`.trim() || "—";
-
-  timezoneEl.textContent = data.time_zone || "—";
-  ispEl.textContent = isp;
-}
-
-/* Convert domain → IP */
+/* Resolve domain → IP */
 async function resolveDomain(domain) {
   try {
-    const res = await fetch(`https://dns.google/resolve?name=${domain}`);
+    const url = `https://dns.google/resolve?name=${domain}`;
+    const res = await fetch(url);
     const json = await res.json();
 
-    const answers = json.Answer;
-    if (!answers || answers.length === 0) return null;
+    if (!json.Answer) return null;
 
-    const aRecord = answers.find(a => a.type === 1);
+    const aRecord = json.Answer.find(a => a.type === 1);
     return aRecord ? aRecord.data : null;
-
   } catch (err) {
     return null;
   }
 }
 
-/* Fetch geo info from geolocation-db */
-async function fetchGeo(ip = "") {
-  const url = ip
-    ? `https://geolocation-db.com/json/${ip}&position=true`
-    : `https://geolocation-db.com/json/&position=true`;
+/* Fetch geo info (IP or domain) */
+async function fetchGeo(query) {
+  let targetIP = query;
 
-  const res = await fetch(url);
-  if (!res.ok) throw new Error("Geo lookup failed");
-
-  return await res.json();
-}
-
-/* INITIAL LOAD */
-async function initApp() {
-  initMap();
-
-  try {
-    const data = await fetchGeo();
-    updateInfoPanel(data);
-    showMarker(data.latitude, data.longitude, data.city);
-
-  } catch (err) {
-    console.error("Init error:", err);
-  }
-}
-
-/* SEARCH HANDLER */
-async function handleSearch() {
-  let query = inputEl.value.trim();
-  if (!query) return alert("Enter an IP or domain.");
-
-  let ip = query;
-
-  // Domain? Convert to IP
-  if (isNaN(query.replace(/\./g, ""))) {
-    ip = await resolveDomain(query);
-    if (!ip) return alert("Invalid domain. Could not resolve.");
+  // If it's a domain, resolve it
+  if (isNaN(query[0])) {
+    const result = await resolveDomain(query);
+    if (!result) throw new Error("Invalid domain");
+    targetIP = result;
   }
 
-  try {
-    const data = await fetchGeo(ip);
-    updateInfoPanel(data);
-    showMarker(data.latitude, data.longitude, data.city);
+  const res = await fetch(`https://ipapi.co/${targetIP}/json/`);
+  const data = await res.json();
 
-  } catch (err) {
-    console.error("Search error:", err);
-    alert("Unable to locate that IP or domain.");
-  }
+  if (data.error) throw new Error("Invalid IP");
+
+  updatePanel(data);
+  updateMap(data.latitude, data.longitude);
 }
 
-/* EVENTS */
-btnEl.addEventListener("click", handleSearch);
-inputEl.addEventListener("keypress", e => {
-  if (e.key === "Enter") handleSearch();
+/* Load user's IP on startup */
+async function loadUserIP() {
+  const res = await fetch("https://ipapi.co/json/");
+  const data = await res.json();
+
+  updatePanel(data);
+  updateMap(data.latitude, data.longitude);
+}
+
+/* Event listeners */
+btnEl.addEventListener("click", () => {
+  const value = inputEl.value.trim();
+  if (value) fetchGeo(value).catch(alert);
 });
 
-/* START APP */
-initApp();
+inputEl.addEventListener("keypress", e => {
+  if (e.key === "Enter") {
+    const value = inputEl.value.trim();
+    if (value) fetchGeo(value).catch(alert);
+  }
+});
+
+/* Initialize */
+initMap();
+loadUserIP();
