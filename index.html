@@ -8,30 +8,28 @@
   <!-- Local favicon -->
   <link rel="icon" href="images/favicon-32x32.png" sizes="32x32" />
 
-  <!-- Leaflet CSS (for map) -->
+  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
-  <!-- Project styles -->
+  <!-- App styles -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Header / hero with responsive background images -->
   <header class="hero">
+  
     <h1 class="visually-hidden">IP Address Tracker</h1>
 
-    <!-- Title for visual -->
     <div class="title">IP Address Tracker</div>
 
-    <!-- Search UI: input + arrow icon button -->
     <div class="search-wrap">
-      <input id="search-input" type="text" placeholder="Search for any IP address or domain" aria-label="Search for IP or domain">
-      <button id="search-btn" aria-label="Search">
+      <input id="search-input" type="text"
+             placeholder="Search for any IP address or domain">
+      <button id="search-btn" type="button" aria-label="search">
         <img src="images/icon-arrow.svg" alt="">
       </button>
     </div>
 
-    <!-- Info panel that overlaps the map (IP, Location, Timezone, ISP) -->
-    <div class="info-panel" role="region" aria-label="IP information">
+    <div class="info-panel">
       <div class="info-item">
         <h4>IP ADDRESS</h4>
         <p id="ip">—</p>
@@ -51,14 +49,14 @@
     </div>
   </header>
 
-  <!-- Map container -->
   <main>
     <div id="map"></div>
   </main>
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <!-- App logic -->
+
+  <!-- Main app -->
   <script src="script.js"></script>
 </body>
 </html>
