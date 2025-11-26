@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>IP Address Tracker</title>
+
+  <!-- Local favicon -->
+  <link rel="icon" href="images/favicon-32x32.png" sizes="32x32" />
+
+  <!-- Leaflet CSS (for map) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+  <!-- Project styles -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Header / hero with responsive background images -->
+  <header class="hero">
+    <h1 class="visually-hidden">IP Address Tracker</h1>
+
+    <!-- Title for visual -->
+    <div class="title">IP Address Tracker</div>
+
+    <!-- Search UI: input + arrow icon button -->
+    <div class="search-wrap">
+      <input id="search-input" type="text" placeholder="Search for any IP address or domain" aria-label="Search for IP or domain">
+      <button id="search-btn" aria-label="Search">
+        <img src="images/icon-arrow.svg" alt="">
+      </button>
+    </div>
+
+    <!-- Info panel that overlaps the map (IP, Location, Timezone, ISP) -->
+    <div class="info-panel" role="region" aria-label="IP information">
+      <div class="info-item">
+        <h4>IP ADDRESS</h4>
+        <p id="ip">—</p>
+      </div>
+      <div class="info-item">
+        <h4>LOCATION</h4>
+        <p id="location">—</p>
+      </div>
+      <div class="info-item">
+        <h4>TIMEZONE</h4>
+        <p id="timezone">—</p>
+      </div>
+      <div class="info-item">
+        <h4>ISP</h4>
+        <p id="isp">—</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Map container -->
+  <main>
+    <div id="map"></div>
+  </main>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <!-- App logic -->
+  <script src="script.js"></script>
+</body>
+</html>
