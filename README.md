@@ -71,7 +71,7 @@ IP-Address-Tracker/
 ### Clone the repo
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/ip-address-tracker.git
+git clone https://github.com/TheBAnalystSN/ip-address-tracker.git
 
 # Open the projectt folder
 
