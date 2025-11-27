@@ -47,6 +47,9 @@ IP-Address-Tracker/
   .gitignore
   <> index.html
   README.md
+  Reflection.md
+  Screenshot 2025-11-27 114103.png
+  Screenshot 2025-11-27 160349.png
   js script.js
   #style.css
 
