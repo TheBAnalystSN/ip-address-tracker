@@ -15,7 +15,7 @@ let map;
 let markerLayer;
 let marker;
 
-// Helper: safe write to element
+// safe 
 function safeSet(el, text) {
   if (!el) return;
   el.textContent = text ?? "—";
@@ -56,7 +56,7 @@ function updateMap(lat, lng, label) {
   if (label) marker.bindPopup(label, { closeButton: false }).openPopup();
 }
 
-/* Domain -> IP resolver using Google DNS */
+/* Domain -> IP resolver */
 async function resolveDomain(domain) {
   try {
     const res = await fetch(`https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=A`);
@@ -71,7 +71,7 @@ async function resolveDomain(domain) {
   }
 }
 
-/* Fetch from ipwho.is. Pass empty string for client IP. */
+/* Fetch from ipwho.is. Pass empty */
 async function fetchIpWho(ipOrEmpty = "") {
   try {
     const url = ipOrEmpty ? `https://ipwho.is/${encodeURIComponent(ipOrEmpty)}` : `https://ipwho.is/`;
@@ -89,7 +89,7 @@ async function fetchIpWho(ipOrEmpty = "") {
   }
 }
 
-/* High-level: search by IP or domain, normalize and update UI */
+/* search by IP or domain */
 async function doLookup(query = "") {
   try {
     safeSet(ipEl, "Loading…");
@@ -99,7 +99,7 @@ async function doLookup(query = "") {
 
     let target = query.trim();
 
-    // detect domain pattern (has letters and dot and not just numbers)
+    // detect domain pattern
     const domainRegex = /^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (target && domainRegex.test(target) && !/^\d/.test(target)) {
       const resolved = await resolveDomain(target);
@@ -110,16 +110,16 @@ async function doLookup(query = "") {
     // If empty, ipwho.is auto-detects client IP
     const data = await fetchIpWho(target || "");
 
-    // Normalize fields (ipwho.is returns connection.isp and timezone)
+    // Normalize fields
     const ip = data.ip || data.IPv4 || "";
     const lat = data.latitude ?? data.lat ?? null;
     const lng = data.longitude ?? data.lon ?? data.lng ?? null;
     const city = data.city || "";
     const region = data.region || data.region_code || data.region_name || "";
     const country = data.country || data.country_name || "";
-    // timezone: ipwho.is returns timezone.id or timezone
+    // timezone
     const tz = (data.timezone && (data.timezone.id || data.timezone)) || data.timezone || "";
-    // ISP: ipwho.is returns connection?.isp or connection?.organization or org
+    // ISP: ipwho.is returns connection?
     const isp = (data.connection && (data.connection.isp || data.connection.organization)) || data.org || data.isp || "";
 
     safeSet(ipEl, ip || "—");
